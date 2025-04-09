@@ -61,6 +61,9 @@ PROFC_NODE("deskew")
   PointTime point_time = point_time_func();
 
   PointCloudT::Ptr out(new PointCloudT);
+  out->width = cloud->width;
+  out->height = cloud->height;
+  out->is_dense = cloud->is_dense;
   out->points.resize(cloud->points.size());
 
   std::vector<int> indices(cloud->points.size());
@@ -106,7 +109,7 @@ PROFC_NODE("filter")
   Config& cfg = Config::getInstance();
 
   PointCloudT::Ptr out(new PointCloudT);
-
+  
   int index = 0;
   std::copy_if(
     cloud->points.begin(), 
@@ -120,25 +123,28 @@ PROFC_NODE("filter")
           if (Eigen::Vector3f(p.x, p.y, p.z).norm() <= cfg.filters.min_distance.value)
               pass = false;
         }
-
+        
         // Rate filter
-        if (cfg.filters.rate_sampling.active) {
+        if (pass && cfg.filters.rate_sampling.active) {
           if (index % cfg.filters.rate_sampling.value != 0)
-              pass = false;
+          pass = false;
         }
 
         // Field of view filter
-        if (cfg.filters.fov.active) {
+        if (pass && cfg.filters.fov.active) {
           if (fabs(atan2(p.y, p.x)) >= cfg.filters.fov.value)
-              pass = false;
+          pass = false;
         }
-
+        
         ++index; // Increment index
-
+        
         return pass;
-    }
-  );
-
+      }
+    );
+    
+  out->width = out->size();
+  out->height = out->size() / out->width;
+  out->is_dense = cloud->is_dense;
   return out;
 }
 

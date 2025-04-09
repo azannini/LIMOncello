@@ -11,9 +11,9 @@ limoncello:
       frame_id: global
 
 
-    verbose: true   # print debug/performance board
-    debug: false     # fill useful intermediate pcl (deskewed, processed ...) 
-                    # for visualizing purposes
+    verbose: false   # print debug/performance board
+    debug: true     # fill useful intermediate pcl (deskewed, processed ...) 
+                     # for visualizing purposes
 
     sensors:
       lidar:
@@ -74,7 +74,7 @@ limoncello:
 
       fov: # crop field of view
         active: false
-        value: 180  # [deg]
+        value: 180.  # [deg]
       
       rate_sampling: # quick downsample
         active: false

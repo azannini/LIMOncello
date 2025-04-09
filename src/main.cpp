@@ -136,7 +136,7 @@ public:
           Eigen::Quaterniond q = Eigen::Quaterniond::FromTwoVectors(
                                   grav_vec, 
                                   Eigen::Vector3d(0., 0., cfg.sensors.extrinsics.gravity));
-          state_.quat(q);
+          // state_.quat(q);
           state_.g(-grav_vec);
         }
         
@@ -254,27 +254,26 @@ PROFC_NODE("LiDAR Callback")
 
     PointCloudT::Ptr global(new PointCloudT);
 
-    for (const auto& p : deskewed->points) {
-      auto pt = T*p.getVector3fMap();
-      PointT pp = p;
-      pp.x = pt.x(); 
-      pp.y = pt.y(); 
-      pp.z = pt.z(); 
-      global->points.push_back(pp);
-    }
-    // pcl::transformPointCloud(*deskewed, *global, T); ORIGINAL
+    // for (const auto& p : deskewed->points) {
+    //   auto pt = T*p.getVector3fMap();
+    //   PointT pp = p;
+    //   pp.x = pt.x(); 
+    //   pp.y = pt.y(); 
+    //   pp.z = pt.z(); 
+    //   global->points.push_back(pp);
+    // }
+    pcl::transformPointCloud(*deskewed, *global, T);
 
-PointCloudT::Ptr new_processed(new PointCloudT);
 
-    for (const auto& p : processed->points) {
-      auto pt = T*p.getVector3fMap();
-      PointT pp = p;
-      pp.x = pt.x(); 
-      pp.y = pt.y(); 
-      pp.z = pt.z(); 
-      new_processed->points.push_back(pp);
-    }
-    // pcl::transformPointCloud(*processed, *processed, T); ORIGINAL
+    // for (const auto& p : processed->points) {
+    //   auto pt = T*p.getVector3fMap();
+    //   PointT pp = p;
+    //   pp.x = pt.x(); 
+    //   pp.y = pt.y(); 
+    //   pp.z = pt.z(); 
+    //   new_processed->points.push_back(pp);
+    // }
+    pcl::transformPointCloud(*processed, *processed, T); 
 
     // Publish
     pub_state->publish(toROS(state_));
@@ -288,7 +287,7 @@ PointCloudT::Ptr new_processed(new PointCloudT);
     }
 
     // Update map
-    ioctree_.update(new_processed->points);
+    ioctree_.update(processed->points);
 
     if (cfg.verbose)
       PROFC_PRINT()

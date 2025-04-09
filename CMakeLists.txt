@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.5)
 project(limoncello)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type (Release or Debug)" FORCE)
 endif()
@@ -38,7 +40,7 @@ include_directories(
 )
 
 # Manif
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/manif)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/manif EXCLUDE_FROM_ALL)
 
 # Link libraries
 set(LINK_LIBRARIES
